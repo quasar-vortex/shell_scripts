@@ -1,5 +1,6 @@
 #!/bin/bash
 
+db_name="portfolio"
 out_dir="/opt/backups"
 cur_date=$(date +'%Y-%m-%d_%H-%M')
 sql_file="$cur_date.sql"
@@ -8,10 +9,6 @@ bkp_dir="$out_dir/bkps"
 
 function handle_existing_items() {
 	mkdir -p "$bkp_dir"
-	if [ -s "$sql_file" ]; then
-		echo "$sql_file already exists. Exiting, wait to backup at least one minute."
-		exit 1
-	fi
 	if [ -s  "$compessed" ]; then
 		echo "Moving $compressed to $bkp_dir/$compressed.bkp"
 		mv "$compressed" "$bkp_dir/$compressed.bkp"
@@ -19,8 +16,12 @@ function handle_existing_items() {
 }
 
 function dump_file() {
-	echo "Dumping SQL File and Compressing"
-	mysqldump portfolio > "$sql_file"
+	echo "Dumping and Compressing"
+	if ! mysqldump "$db_name" > "$sql_file"; then
+ 		echo "Dump failed"
+   		rm -rf "$sql_file"
+     		exit 1
+       fi
 	bzip2 "$sql_file"
 }
 

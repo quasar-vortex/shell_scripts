@@ -9,7 +9,7 @@ bkp_dir="$out_dir/bkps"
 
 function handle_existing_items() {
 	mkdir -p "$bkp_dir"
-	if [ -s  "$compessed" ]; then
+	if [ -s  "$compressed" ]; then
 		echo "Moving $compressed to $bkp_dir/$compressed.bkp"
 		mv "$compressed" "$bkp_dir/$compressed.bkp"
 	fi
